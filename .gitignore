@@ -133,3 +133,19 @@ tests/testing_data/*Hippocampus*
 
 # Temporary workspace
 tmp_*_dir/
+
+# Data files
+*.nii.gz
+*.nii
+*.pt
+*.pth
+*.zip
+*.tar.gz
+*.h5
+*.hdf5
+*.ckpt
+
+# Output directories
+outputs/
+results/
+pretrained_models/

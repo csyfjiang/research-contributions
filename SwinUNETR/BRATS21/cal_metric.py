@@ -104,7 +104,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--pred_dir", required=True, help="Directory with prediction nii.gz files")
     parser.add_argument("--gt_dir", required=True, help="Directory with GT patient folders")
-    parser.add_argument("--output_csv", default="./outputs/brats23_fold1_metrics.csv")
+    parser.add_argument("--output_csv", default="I:/PhD/BraTS/outputs/brats23_fold1_metrics.csv")
     args = parser.parse_args()
 
     pred_files = sorted(glob.glob(os.path.join(args.pred_dir, "*.nii.gz")))

@@ -52,7 +52,7 @@ parser.add_argument("--spatial_dims", default=3, type=int, help="spatial dimensi
 parser.add_argument("--use_checkpoint", action="store_true", help="use gradient checkpointing to save memory")
 parser.add_argument(
     "--pretrained_dir",
-    default="./pretrained_models/fold1_f48_ep300_4gpu_dice0_9059/",
+    default="I:/PhD/BraTS/pretrained_models/fold1_f48_ep300_4gpu_dice0_9059/",
     type=str,
     help="pretrained checkpoint directory",
 )
@@ -61,7 +61,7 @@ parser.add_argument(
 def main():
     args = parser.parse_args()
     args.test_mode = True
-    output_directory = "./outputs/" + args.exp_name
+    output_directory = "I:/PhD/BraTS/outputs/" + args.exp_name
     if not os.path.exists(output_directory):
         os.makedirs(output_directory)
     test_loader = get_loader(args)
