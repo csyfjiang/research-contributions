@@ -70,6 +70,7 @@ def main():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     pretrained_pth = os.path.join(pretrained_dir, model_name)
     model = SwinUNETR(
+        img_size=(args.roi_x, args.roi_y, args.roi_z),
         in_channels=args.in_channels,
         out_channels=args.out_channels,
         feature_size=args.feature_size,
@@ -78,7 +79,7 @@ def main():
         dropout_path_rate=0.0,
         use_checkpoint=args.use_checkpoint,
     )
-    model_dict = torch.load(pretrained_pth)["state_dict"]
+    model_dict = torch.load(pretrained_pth, weights_only=False)["state_dict"]
     model.load_state_dict(model_dict)
     model.eval()
     model.to(device)
@@ -94,9 +95,18 @@ def main():
     with torch.no_grad():
         for i, batch in enumerate(test_loader):
             image = batch["image"].cuda()
-            affine = batch["image_meta_dict"]["original_affine"][0].numpy()
-            num = batch["image_meta_dict"]["filename_or_obj"][0].split("/")[-1].split("_")[1]
-            img_name = "BraTS2021_" + num + ".nii.gz"
+            img_meta = batch["image"].meta
+            affine = img_meta["original_affine"][0].numpy()
+            fname = img_meta["filename_or_obj"][0]
+            # Support both BraTS2021 and BraTS2023 naming
+            basename = os.path.basename(fname)
+            if "BraTS2021" in basename:
+                num = basename.split("_")[1]
+                img_name = "BraTS2021_" + num + ".nii.gz"
+            else:
+                # BraTS2023: e.g. BraTS-GLI-00000-000-t2f.nii.gz -> BraTS-GLI-00000-000.nii.gz
+                parts = basename.split("-")
+                img_name = "-".join(parts[:4]) + ".nii.gz"
             print("Inference on case {}".format(img_name))
             prob = torch.sigmoid(model_inferer_test(image))
             seg = prob[0].detach().cpu().numpy()
